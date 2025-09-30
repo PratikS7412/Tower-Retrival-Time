@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Parking System - Time Retrieval Calculator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>Tower Parking System Calculator</h1>
+            <p class="subtitle">Dynamic Time Retrieval Analysis</p>
+        </header>
+
+        <div class="app-layout">
+            <!-- Input Parameters Section -->
+            <div class="input-section">
+                <div class="section-header">
+                    <h2>Configuration Parameters</h2>
+                    <button class="btn btn-secondary" id="resetBtn">Reset Defaults</button>
+                </div>
+
+                <!-- System Parameters -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>System Parameters</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="liftingSpeed">Lifting Speed (m/min)</label>
+                            <input type="number" id="liftingSpeed" value="60" step="0.1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="traversingSpeed">Traversing Speed (m/min)</label>
+                            <input type="number" id="traversingSpeed" value="20" step="0.1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="turnTableSpeed">Turn Table Speed (RPM)</label>
+                            <input type="number" id="turnTableSpeed" value="2.2" step="0.1" min="0.1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Distance Parameters -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Distance Parameters</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="traversingDistance1">Traversing Distance 1 (mm)</label>
+                            <input type="number" id="traversingDistance1" value="2270" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="traversingDistance2">Traversing Distance 2 (mm)</label>
+                            <input type="number" id="traversingDistance2" value="2370" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="palletInner">Pallet Inner (mm)</label>
+                            <input type="number" id="palletInner" value="2000" step="1" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Constants -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Time Constants</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="doorTime">Door Opening/Closing (seconds)</label>
+                            <input type="number" id="doorTime" value="20" step="0.1" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="additionalTime">Additional Time (seconds)</label>
+                            <input type="number" id="additionalTime" value="20" step="0.1" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="processingTime">Processing Time (seconds)</label>
+                            <input type="number" id="processingTime" value="20" step="0.1" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="liftingAddTime">Lifting Add Time (seconds)</label>
+                            <input type="number" id="liftingAddTime" value="12" step="0.1" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="traversingAddTime">Traversing Add Time (seconds)</label>
+                            <input type="number" id="traversingAddTime" value="5" step="0.1" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tower Configuration -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Tower Configuration</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="towerType">Tower Type</label>
+                            <select id="towerType">
+                                <option value="0+1">0+1</option>
+                                <option value="0+2">0+2</option>
+                                <option value="0+3">0+3</option>
+                                <option value="1+1" selected>1+1</option>
+                                <option value="1+2">1+2</option>
+                                <option value="1+3">1+3</option>
+                                <option value="2+2">2+2</option>
+                                <option value="2+3">2+3</option>
+                                <option value="3+3">3+3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfCars">Number of Cars</label>
+                            <input type="number" id="numberOfCars" value="70" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="numberOfLevels">Number of Levels</label>
+                            <input type="number" id="numberOfLevels" value="25" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="firstLevelHeight">First Level Height (mm)</label>
+                            <input type="number" id="firstLevelHeight" value="2550" step="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="levelHeight">Regular Level Height (mm)</label>
+                            <input type="number" id="levelHeight" value="2100" step="1" min="1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <div class="section-header">
+                    <h2>Calculation Results</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="toggleBreakdown">Show Details</button>
+                        <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
+                    </div>
+                </div>
+
+                <!-- Main Results -->
+                <div class="card results-card">
+                    <div class="card-header">
+                        <h3>Retrieval Time Analysis</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <label>Minimum Retrieval Time</label>
+                                <div class="result-value">
+                                    <span id="minTimeSeconds">--</span> seconds
+                                    <span class="result-secondary">(<span id="minTimeMinutes">--</span> minutes)</span>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <label>Maximum Retrieval Time</label>
+                                <div class="result-value">
+                                    <span id="maxTimeSeconds">--</span> seconds
+                                    <span class="result-secondary">(<span id="maxTimeMinutes">--</span> minutes)</span>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <label>Average Retrieval Time</label>
+                                <div class="result-value">
+                                    <span id="avgTimeSeconds">--</span> seconds
+                                    <span class="result-secondary">(<span id="avgTimeMinutes">--</span> minutes)</span>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <label>Total Time for All Cars</label>
+                                <div class="result-value">
+                                    <span id="totalTimeHours">--</span> hours
+                                    <span class="result-secondary">(<span id="totalTimeMinutes">--</span> minutes)</span>
+                                </div>
+                            </div>
+                            <div class="result-item">
+                                <label>System Throughput</label>
+                                <div class="result-value">
+                                    <span id="throughputPerHour">--</span> cars/hour
+                                    <span class="result-secondary">(<span id="throughputPercent">--</span>%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Indicators -->
+                <div class="card performance-card">
+                    <div class="card-header">
+                        <h3>Performance Indicators</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="performance-indicators">
+                            <div class="indicator" id="efficiencyIndicator">
+                                <div class="indicator-label">System Efficiency</div>
+                                <div class="indicator-bar">
+                                    <div class="indicator-fill" id="efficiencyFill"></div>
+                                </div>
+                                <div class="indicator-value" id="efficiencyValue">--</div>
+                            </div>
+                            <div class="indicator" id="speedIndicator">
+                                <div class="indicator-label">Retrieval Speed</div>
+                                <div class="indicator-bar">
+                                    <div class="indicator-fill" id="speedFill"></div>
+                                </div>
+                                <div class="indicator-value" id="speedValue">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdown (Hidden by default) -->
+                <div class="card breakdown-card" id="breakdownCard" style="display: none;">
+                    <div class="card-header">
+                        <h3>Detailed Calculation Breakdown</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="breakdown-content">
+                            <div class="breakdown-section">
+                                <h4>Base Time Components</h4>
+                                <div class="breakdown-item">
+                                    <span>Door Opening/Closing:</span>
+                                    <span id="breakdownDoorTime">--</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Processing Time:</span>
+                                    <span id="breakdownProcessingTime">--</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Additional Time:</span>
+                                    <span id="breakdownAdditionalTime">--</span>
+                                </div>
+                            </div>
+                            <div class="breakdown-section">
+                                <h4>Movement Times</h4>
+                                <div class="breakdown-item">
+                                    <span>Lifting Time (max):</span>
+                                    <span id="breakdownLiftingTime">--</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Traversing Time:</span>
+                                    <span id="breakdownTraversingTime">--</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Rotation Time (180°):</span>
+                                    <span id="breakdownRotationTime">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/calculator.js"></script>
+</body>
+</html>
