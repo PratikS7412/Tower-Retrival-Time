@@ -17,7 +17,8 @@
   button:hover { background:linear-gradient(90deg,#2563eb,#1e40af); }
   .result { background:#e0f2fe; padding:15px; border-radius:10px; font-weight:600; color:#1e3a8a; box-shadow:0 2px 8px rgba(0,0,0,0.05);}
   .flex-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:15px; }
-  p { margin:5px 0;}
+  .level-range { display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-bottom:10px; }
+  .level-range button { width:50px; padding:5px; background:red; }
   small { color:#6b7280; font-style:italic;}
 </style>
 </head>
@@ -26,6 +27,7 @@
 <h1>Tower Car Parking Retrieval Calculator</h1>
 <div class="container">
 
+  <!-- Speed Inputs -->
   <div class="card">
     <h3>Speed Inputs</h3>
     <div class="flex-row">
@@ -44,6 +46,7 @@
     </div>
   </div>
 
+  <!-- Pallet & Tower -->
   <div class="card">
     <h3>Pallet & Tower</h3>
     <div class="flex-row">
@@ -76,26 +79,15 @@
     </div>
   </div>
 
+  <!-- Level Ranges -->
   <div class="card">
-    <h3>Levels & Slot Heights</h3>
-    <label>Level Height Mapping (JSON, e.g. {"1-3":2100,"4-5":2550})</label>
-    <input type="text" id="levelHeights" value='{"1-3":2100,"4-5":2550}'>
-    
-    <div class="flex-row">
-      <div>
-        <label>Below Ground Levels</label>
-        <input type="number" id="belowLevels" value="2">
-      </div>
-      <div>
-        <label>Entry Type for B1</label>
-        <select id="entryType">
-          <option value="straight">Straight</option>
-          <option value="90">90°</option>
-        </select>
-      </div>
-    </div>
+    <h3>Level Heights</h3>
+    <div id="levelRangesContainer"></div>
+    <button onclick="addLevelRange()">+ Add Level Range</button>
+    <small>Specify start level, end level, and slot height in mm. Below-ground levels should start from 1, above-ground levels continue from below.</small>
   </div>
 
+  <!-- Turn Table -->
   <div class="card">
     <label>Turn Table Required?</label>
     <select id="turnTable">
@@ -104,6 +96,7 @@
     </select>
   </div>
 
+  <!-- Buffer Times -->
   <div class="card">
     <h3>Buffer Times (s)</h3>
     <div class="flex-row">
@@ -136,55 +129,73 @@
 </div>
 
 <script>
-// Turn Table default
 function setTurnTableDefault(){
   let tower = document.getElementById('towerCombo').value;
-  if(['0+1','0+2','0+3'].includes(tower)){
-    document.getElementById('turnTable').value='no';
-  } else {
-    document.getElementById('turnTable').value='yes';
-  }
+  document.getElementById('turnTable').value = ['0+1','0+2','0+3'].includes(tower)?'no':'yes';
 }
 
-// Calculation logic here
+// Level range management
+function addLevelRange(start='', end='', height=''){
+  let container = document.getElementById('levelRangesContainer');
+  let div = document.createElement('div');
+  div.className = 'level-range';
+  div.innerHTML = `
+    <input type="number" placeholder="Start Level" value="${start}">
+    <input type="number" placeholder="End Level" value="${end}">
+    <input type="number" placeholder="Slot Height mm" value="${height}">
+    <button onclick="this.parentNode.remove()">x</button>
+  `;
+  container.appendChild(div);
+}
+
+// Add a default range
+addLevelRange('1','5','2550');
+
+// Retrieve all level ranges as an array of {start,end,height}
+function getLevelRanges(){
+  let container = document.getElementById('levelRangesContainer');
+  let ranges = [];
+  for(let div of container.children){
+    let inputs = div.getElementsByTagName('input');
+    let start = parseInt(inputs[0].value);
+    let end = parseInt(inputs[1].value);
+    let height = parseFloat(inputs[2].value);
+    if(!isNaN(start) && !isNaN(end) && !isNaN(height)) ranges.push({start,end,height});
+  }
+  return ranges;
+}
+
+// Calculate retrieval time
 function calculateTime(){
   let liftSpeed = parseFloat(document.getElementById('liftingSpeed').value)/60;
   let traverseSpeed = parseFloat(document.getElementById('traverseSpeed').value)/60;
   let rotationRPM = parseFloat(document.getElementById('rotationSpeed').value);
   let palletInner = parseFloat(document.getElementById('palletInner').value);
   let towerCombo = document.getElementById('towerCombo').value.split('+').map(Number);
-  let belowLevels = parseInt(document.getElementById('belowLevels').value);
-  let entryType = document.getElementById('entryType').value;
-  let turnTable = document.getElementById('turnTable').value;
-
   let liftExtra = parseFloat(document.getElementById('liftExtra').value);
   let traverseExtra = parseFloat(document.getElementById('traverseExtra').value);
   let doorTime = parseFloat(document.getElementById('doorTime').value);
   let controlTime = parseFloat(document.getElementById('controlTime').value);
   let additionalTime = parseFloat(document.getElementById('additionalTime').value);
+  let turnTable = document.getElementById('turnTable').value;
 
-  let levelHeightsInput = document.getElementById('levelHeights').value;
-  let levelHeights = {};
-  try { levelHeights = JSON.parse(levelHeightsInput); } 
-  catch(e){ alert('Invalid JSON for Level Heights'); return; }
+  let levelRanges = getLevelRanges();
+  let maxSlotHeight = Math.max(...levelRanges.map(r=>r.height));
+  let traverseDist = (palletInner+270)/1000;
 
   function getHeight(level){
-    for(let range in levelHeights){
-      let parts = range.split('-').map(Number);
-      if(level>=parts[0] && level<=parts[1]) return levelHeights[range];
+    for(let r of levelRanges){
+      if(level>=r.start && level<=r.end) return r.height;
     }
-    return Math.max(...Object.values(levelHeights));
+    return maxSlotHeight;
   }
 
-  let traverseDist = (palletInner+270)/1000;
-  let maxSlotHeight = Math.max(...Object.values(levelHeights));
-  let allTimes=[];
-
+  let allTimes = [];
   function calcPalletTime(pos){
     let shuffles = pos>1?pos-1:0;
     let shuffleTime = shuffles*((maxSlotHeight/1000/liftSpeed+liftExtra)+(traverseDist/traverseSpeed+traverseExtra));
     let liftDist = getHeight(pos)/1000;
-    if(pos===1 && belowLevels>=1) liftDist += entryType==='straight'?0.65:0.95;
+    if(pos===1 && towerCombo[0]>=1) liftDist += 0.65; // entry adjustment B1
     let liftTime = liftDist/liftSpeed + liftExtra;
     let traverseTime = traverseDist/traverseSpeed + traverseExtra;
     let rotationTime = turnTable==='yes'?180/(rotationRPM*360/60):0;
