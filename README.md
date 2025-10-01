@@ -1,78 +1,118 @@
-# Tower Parking System - Time Retrieval Calculator
+# Tower Parking System - Enhanced Time Retrieval Calculator
 
-A comprehensive web application for calculating and analyzing tower parking system retrieval times based on configurable parameters.
+A comprehensive web application for calculating and analyzing tower parking system retrieval times with advanced level configuration options.
 
-## Features
+## NEW FEATURES - Enhanced Level Configuration
 
-- **Dynamic Calculations**: Real-time calculation updates as parameters change
-- **Multiple Tower Configurations**: Support for 0+1, 0+2, 0+3, 1+1, 1+2, 1+3, 2+2, 2+3, 3+3 configurations
-- **Comprehensive Parameters**: Configurable lifting speeds, traversing speeds, distances, and time constants
-- **Performance Analysis**: Visual indicators showing system efficiency and throughput
-- **Detailed Breakdown**: Show/hide detailed calculation breakdown
-- **Export Functionality**: Export results to CSV format
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+### Above/Below Ground Separation
+- **Levels Above Ground**: Specify exact number of levels above ground
+- **Levels Below Ground**: Specify exact number of levels below ground
+- **Individual Height Control**: Different heights for above and below ground levels
+
+### Multiple Height Combinations (Above Ground)
+- **Single Height Mode**: Use one height for all above ground levels
+- **Multiple Height Mode**: Enable up to 3 different height combinations
+  - Specify height and number of levels for each combination
+  - Remaining levels automatically use default height
+  - Visual summary shows exact distribution
+
+### Enhanced Calculations
+- **Accurate Height Totals**: Sum of all individual level heights
+- **Flexible Configuration**: Supports complex building designs
+- **Real-time Updates**: Level summary updates as you change parameters
+
+## Key Features
+
+- **Dynamic Level Configuration**: Separate above/below ground with multiple height options
+- **Real-time Calculations**: Updates instantly as parameters change
+- **Visual Level Summary**: Shows breakdown of level configurations
+- **Multiple Tower Types**: Support for 0+1 through 3+3 configurations
+- **Performance Analysis**: Visual indicators for system efficiency
+- **Export Functionality**: Export complete analysis to CSV
+- **Responsive Design**: Works on all device sizes
 
 ## Usage
 
-1. **Configure Parameters**: Adjust system parameters in the left panel:
-   - System speeds (lifting, traversing, turn table)
-   - Distance parameters (traversing distances, pallet dimensions)
-   - Time constants (door operations, processing times)
-   - Tower configuration and capacity
+### Level Configuration
+1. **Set Level Counts**: Enter number of above and below ground levels
+2. **Configure Heights**: 
+   - Set default above ground height
+   - Optionally enable multiple height combinations
+   - Set below ground height
+3. **Review Summary**: Check the automatic level configuration summary
 
-2. **View Results**: Real-time results display shows:
-   - Minimum, maximum, and average retrieval times
-   - Total time required for all cars
-   - System throughput in cars per hour
-   - Performance indicators with visual feedback
+### Height Combinations
+When "Enable multiple height combinations" is checked:
+- **Combination 1**: Set height and number of levels
+- **Combination 2**: Set height and number of levels  
+- **Remaining Levels**: Automatically use default height
 
-3. **Detailed Analysis**: Toggle detailed breakdown to see:
-   - Base time components
-   - Movement time calculations
-   - Step-by-step calculation process
+Example:
+- 25 levels above ground
+- Combination 1: 1900mm for 10 levels
+- Combination 2: 2200mm for 5 levels
+- Remaining 10 levels: 2100mm (default)
 
-4. **Export Data**: Export complete analysis to CSV for further processing
+### System Parameters
+Configure mechanical system parameters:
+- Lifting speed, traversing speed, turn table speed
+- Distance parameters and time constants
+- Tower configuration and car capacity
 
-## Technical Details
+### Results Analysis
+- **Retrieval Times**: Min, max, and average times
+- **Performance Metrics**: Efficiency and throughput indicators
+- **Level Summary**: Visual breakdown of configuration
+- **Detailed Breakdown**: Step-by-step calculation display
 
-### Calculation Methodology
+## Technical Implementation
 
-The calculator uses the following formula structure:
+### Enhanced Calculation Logic
+```javascript
+// Above ground calculation with combinations
+if (enableCombinations) {
+    totalHeight = (height1 × count1) + (height2 × count2) + (defaultHeight × remainingLevels)
+} else {
+    totalHeight = defaultHeight × totalLevels
+}
 
+// Below ground calculation
+belowGroundHeight = belowHeight × belowLevels
+
+// Total lifting height
+totalLiftingHeight = totalAboveHeight + totalBelowHeight
 ```
-Total Retrieval Time = Base Time + Lifting Time + Traversing Time + Rotation Time
-```
 
-Where:
-- **Base Time**: Door operations + Processing + Additional times
-- **Lifting Time**: Height / Lifting Speed (varies by level)
-- **Traversing Time**: Distance / Traversing Speed
-- **Rotation Time**: 180° / Turn Table Speed
-
-### Tower Configuration Impact
-
-Different tower configurations (0+1, 1+1, 2+2, etc.) apply complexity factors based on:
-- Number of parking rows on each side
-- Access pattern complexity
-- Movement coordination requirements
-
-### Performance Metrics
-
-- **System Efficiency**: Based on average retrieval time (target: <3 minutes)
-- **Throughput**: Calculated as cars per hour capacity
-- **Performance Classification**: Good/Moderate/Poor based on industry standards
+### Level Configuration Validation
+- Automatic level count validation
+- Height combination overflow handling
+- Real-time summary updates
+- Input validation and error handling
 
 ## File Structure
 
 ```
-tower-parking-calculator/
-├── index.html          # Main application interface
+tower-parking-calculator-enhanced/
+├── index.html              # Enhanced UI with level configuration
 ├── css/
-│   └── styles.css      # Application styling
+│   └── styles.css          # Enhanced styling with level summary
 ├── js/
-│   └── calculator.js   # Main calculation engine
-└── README.md           # This documentation
+│   └── calculator.js       # Enhanced calculation engine
+└── README.md               # This documentation
 ```
+
+## Installation & Deployment
+
+### Local Development
+1. Download and extract the project files
+2. Open `index.html` in a web browser
+3. No server setup required - runs entirely client-side
+
+### GitHub Pages Deployment
+1. Create new repository on GitHub
+2. Upload all project files
+3. Enable GitHub Pages in repository settings
+4. Access at `https://yourusername.github.io/repository-name`
 
 ## Browser Compatibility
 
@@ -81,53 +121,50 @@ tower-parking-calculator/
 - Safari 13+
 - Edge 80+
 
-## Installation
-
-1. Clone or download this repository
-2. Open `index.html` in a web browser
-3. No additional dependencies or server setup required
-
-## Customization
+## Customization Examples
 
 ### Adding New Tower Configurations
-
-Edit the `towerConfigurations` object in `calculator.js`:
-
 ```javascript
 this.towerConfigurations = {
-    "custom": [factor1, factor2, factor3, factor4, factor5, factor6, factor7],
-    // Add new configurations here
+    "4+4": [4.0, 4.0, 2.0, 1.0, 2.0, 4.0, 4.0],
+    // Add custom configurations
 };
 ```
 
-### Modifying Default Parameters
-
-Update the `defaultParams` object in `calculator.js`:
-
+### Modifying Default Level Heights
 ```javascript
-this.defaultParams = {
-    liftingSpeed: 60.0,      // m/min
-    traversingSpeed: 20.0,   // m/min
-    // Modify default values here
-};
+// In calculator.js - modify default values
+aboveHeight1: 2100,  // Default above ground height (mm)
+belowHeight: 2000,   // Default below ground height (mm)
 ```
 
-## License
+## Performance Optimization
 
-MIT License - feel free to use and modify as needed.
+The enhanced calculator includes:
+- **Efficient Calculations**: Optimized height summation algorithms
+- **Real-time Updates**: Debounced input handling
+- **Memory Management**: Efficient DOM updates
+- **Error Handling**: Robust input validation
 
-## Contributing
+## Export Features
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Enhanced CSV export includes:
+- Complete level configuration breakdown
+- Height combination details
+- Total height calculations
+- Performance metrics
+- System parameters
 
-## Support
+## Support & Contributing
 
-For questions or issues, please create an issue in the repository or contact the development team.
+For issues, questions, or contributions:
+1. Check existing issues in the repository
+2. Create detailed bug reports with configuration details
+3. Include level configuration when reporting calculation issues
+4. Test with multiple tower types before submitting
 
 ---
 
-**Note**: This calculator is based on typical tower parking system specifications and should be validated against manufacturer specifications for production use.
+**Version**: 2.0 - Enhanced Level Configuration  
+**License**: MIT  
+**Compatibility**: Modern web browsers with ES6 support

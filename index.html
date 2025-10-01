@@ -10,7 +10,7 @@
     <div class="container">
         <header class="app-header">
             <h1>Tower Parking System Calculator</h1>
-            <p class="subtitle">Dynamic Time Retrieval Analysis</p>
+            <p class="subtitle">Dynamic Time Retrieval Analysis - Enhanced Level Configuration</p>
         </header>
 
         <div class="app-layout">
@@ -19,6 +19,69 @@
                 <div class="section-header">
                     <h2>Configuration Parameters</h2>
                     <button class="btn btn-secondary" id="resetBtn">Reset Defaults</button>
+                </div>
+
+                <!-- Enhanced Level Configuration -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Level Configuration</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="levelsAbove">Levels Above Ground</label>
+                            <input type="number" id="levelsAbove" value="20" step="1" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="levelsBelow">Levels Below Ground</label>
+                            <input type="number" id="levelsBelow" value="5" step="1" min="0">
+                        </div>
+
+                        <div class="level-heights-section">
+                            <h4>Above Ground Heights</h4>
+                            <div class="form-group">
+                                <label for="aboveHeight1">Default Height (mm)</label>
+                                <input type="number" id="aboveHeight1" value="2100" step="1" min="1">
+                                <small class="form-text">Used for all above ground levels unless combinations are enabled</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="enableCombos">
+                                    <input type="checkbox" id="enableCombos">
+                                    Enable multiple height combinations
+                                </label>
+                            </div>
+
+                            <div id="comboInputs" style="display: none;">
+                                <div class="combo-group">
+                                    <h5>Height Combination 1</h5>
+                                    <div class="combo-input-row">
+                                        <input type="number" id="aboveHeight2" value="1900" step="1" min="1" placeholder="Height (mm)">
+                                        <span>for</span>
+                                        <input type="number" id="aboveCount2" value="10" step="1" min="0" placeholder="Number of levels">
+                                        <span>levels</span>
+                                    </div>
+                                </div>
+                                <div class="combo-group">
+                                    <h5>Height Combination 2</h5>
+                                    <div class="combo-input-row">
+                                        <input type="number" id="aboveHeight3" value="2200" step="1" min="1" placeholder="Height (mm)">
+                                        <span>for</span>
+                                        <input type="number" id="aboveCount3" value="5" step="1" min="0" placeholder="Number of levels">
+                                        <span>levels</span>
+                                    </div>
+                                </div>
+                                <div class="form-text">
+                                    <small>Remaining levels will use the default height above</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="belowHeight">Below Ground Height (mm)</label>
+                            <input type="number" id="belowHeight" value="2000" step="1" min="1">
+                            <small class="form-text">Height for each below ground level</small>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- System Parameters -->
@@ -116,18 +179,6 @@
                             <label for="numberOfCars">Number of Cars</label>
                             <input type="number" id="numberOfCars" value="70" step="1" min="1">
                         </div>
-                        <div class="form-group">
-                            <label for="numberOfLevels">Number of Levels</label>
-                            <input type="number" id="numberOfLevels" value="25" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="firstLevelHeight">First Level Height (mm)</label>
-                            <input type="number" id="firstLevelHeight" value="2550" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="levelHeight">Regular Level Height (mm)</label>
-                            <input type="number" id="levelHeight" value="2100" step="1" min="1">
-                        </div>
                     </div>
                 </div>
             </div>
@@ -188,6 +239,18 @@
                     </div>
                 </div>
 
+                <!-- Level Summary -->
+                <div class="card level-summary-card">
+                    <div class="card-header">
+                        <h3>Level Configuration Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="levelSummary">
+                            <!-- Dynamic content populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Performance Indicators -->
                 <div class="card performance-card">
                     <div class="card-header">
@@ -238,7 +301,11 @@
                             <div class="breakdown-section">
                                 <h4>Movement Times</h4>
                                 <div class="breakdown-item">
-                                    <span>Lifting Time (max):</span>
+                                    <span>Total Lifting Height:</span>
+                                    <span id="breakdownTotalHeight">--</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span>Lifting Time:</span>
                                     <span id="breakdownLiftingTime">--</span>
                                 </div>
                                 <div class="breakdown-item">
