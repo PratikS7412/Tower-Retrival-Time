@@ -1,329 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tower Parking System - Time Retrieval Calculator</title>
-    <link rel="stylesheet" href="css/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tower Car Parking Retrieval Time Calculator</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; background-color: #f5f5f5; }
+  input, select { padding: 5px; margin: 5px 0; width: 100%; max-width: 200px; }
+  label { font-weight: bold; display: block; margin-top: 10px; }
+  .card { border: 1px solid #ccc; padding: 15px; margin: 15px 0; border-radius: 8px; background-color: #fff; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);}
+  button { padding: 10px 20px; margin-top: 10px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; }
+  button:hover { background-color: #0056b3; }
+  .result { font-weight: bold; margin-top: 20px; font-size: 1.2em; background: #e7f3ff; padding: 10px; border-radius: 5px; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header class="app-header">
-            <h1>Tower Parking System Calculator</h1>
-            <p class="subtitle">Dynamic Time Retrieval Analysis - Enhanced Level Configuration</p>
-        </header>
 
-        <div class="app-layout">
-            <!-- Input Parameters Section -->
-            <div class="input-section">
-                <div class="section-header">
-                    <h2>Configuration Parameters</h2>
-                    <button class="btn btn-secondary" id="resetBtn">Reset Defaults</button>
-                </div>
+<h1>Tower Car Parking Retrieval Time Calculator</h1>
 
-                <!-- Enhanced Level Configuration -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Level Configuration</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="levelsAbove">Levels Above Ground</label>
-                            <input type="number" id="levelsAbove" value="20" step="1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="levelsBelow">Levels Below Ground</label>
-                            <input type="number" id="levelsBelow" value="5" step="1" min="0">
-                        </div>
+<div class="card">
+  <h3>Speed Inputs</h3>
+  <label>Lifting Speed (m/min):</label>
+  <input type="number" id="liftingSpeed" value="60">
 
-                        <div class="level-heights-section">
-                            <h4>Above Ground Heights</h4>
-                            <div class="form-group">
-                                <label for="aboveHeight1">Default Height (mm)</label>
-                                <input type="number" id="aboveHeight1" value="2100" step="1" min="1">
-                                <small class="form-text">Used for all above ground levels unless combinations are enabled</small>
-                            </div>
+  <label>Traversing Speed (m/min):</label>
+  <input type="number" id="traverseSpeed" value="20">
 
-                            <div class="form-group">
-                                <label for="enableCombos">
-                                    <input type="checkbox" id="enableCombos">
-                                    Enable multiple height combinations
-                                </label>
-                            </div>
+  <label>Rotation Speed (RPM):</label>
+  <input type="number" id="rotationSpeed" value="2.2">
+</div>
 
-                            <div id="comboInputs" style="display: none;">
-                                <div class="combo-group">
-                                    <h5>Height Combination 1</h5>
-                                    <div class="combo-input-row">
-                                        <input type="number" id="aboveHeight2" value="1900" step="1" min="1" placeholder="Height (mm)">
-                                        <span>for</span>
-                                        <input type="number" id="aboveCount2" value="10" step="1" min="0" placeholder="Number of levels">
-                                        <span>levels</span>
-                                    </div>
-                                </div>
-                                <div class="combo-group">
-                                    <h5>Height Combination 2</h5>
-                                    <div class="combo-input-row">
-                                        <input type="number" id="aboveHeight3" value="2200" step="1" min="1" placeholder="Height (mm)">
-                                        <span>for</span>
-                                        <input type="number" id="aboveCount3" value="5" step="1" min="0" placeholder="Number of levels">
-                                        <span>levels</span>
-                                    </div>
-                                </div>
-                                <div class="form-text">
-                                    <small>Remaining levels will use the default height above</small>
-                                </div>
-                            </div>
-                        </div>
+<div class="card">
+  <h3>Pallet and Tower</h3>
+  <label>Pallet Inner Size (mm):</label>
+  <select id="palletInner">
+    <option value="1900">1900</option>
+    <option value="1950">1950</option>
+    <option value="2000" selected>2000</option>
+    <option value="2050">2050</option>
+    <option value="2100">2100</option>
+    <option value="2150">2150</option>
+    <option value="2200">2200</option>
+  </select>
 
-                        <div class="form-group">
-                            <label for="belowHeight">Below Ground Height (mm)</label>
-                            <input type="number" id="belowHeight" value="2000" step="1" min="1">
-                            <small class="form-text">Height for each below ground level</small>
-                        </div>
-                    </div>
-                </div>
+  <label>Tower Combination:</label>
+  <select id="towerCombo">
+    <option value="0+1">0+1</option>
+    <option value="0+2">0+2</option>
+    <option value="0+3">0+3</option>
+    <option value="1+1">1+1</option>
+    <option value="1+2">1+2</option>
+    <option value="1+3">1+3</option>
+    <option value="2+2">2+2</option>
+    <option value="2+3">2+3</option>
+    <option value="3+3">3+3</option>
+  </select>
 
-                <!-- System Parameters -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>System Parameters</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="liftingSpeed">Lifting Speed (m/min)</label>
-                            <input type="number" id="liftingSpeed" value="60" step="0.1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="traversingSpeed">Traversing Speed (m/min)</label>
-                            <input type="number" id="traversingSpeed" value="20" step="0.1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="turnTableSpeed">Turn Table Speed (RPM)</label>
-                            <input type="number" id="turnTableSpeed" value="2.2" step="0.1" min="0.1">
-                        </div>
-                    </div>
-                </div>
+  <label>Target Pallet Side:</label>
+  <select id="targetSide">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+  </select>
 
-                <!-- Distance Parameters -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Distance Parameters</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="traversingDistance1">Traversing Distance 1 (mm)</label>
-                            <input type="number" id="traversingDistance1" value="2270" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="traversingDistance2">Traversing Distance 2 (mm)</label>
-                            <input type="number" id="traversingDistance2" value="2370" step="1" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="palletInner">Pallet Inner (mm)</label>
-                            <input type="number" id="palletInner" value="2000" step="1" min="1">
-                        </div>
-                    </div>
-                </div>
+  <label>Target Pallet Position (1,2,3):</label>
+  <input type="number" id="targetPosition" value="1" min="1" max="3">
+</div>
 
-                <!-- Time Constants -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Time Constants</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="doorTime">Door Opening/Closing (seconds)</label>
-                            <input type="number" id="doorTime" value="20" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="additionalTime">Additional Time (seconds)</label>
-                            <input type="number" id="additionalTime" value="20" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="processingTime">Processing Time (seconds)</label>
-                            <input type="number" id="processingTime" value="20" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="liftingAddTime">Lifting Add Time (seconds)</label>
-                            <input type="number" id="liftingAddTime" value="12" step="0.1" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="traversingAddTime">Traversing Add Time (seconds)</label>
-                            <input type="number" id="traversingAddTime" value="5" step="0.1" min="0">
-                        </div>
-                    </div>
-                </div>
+<div class="card">
+  <h3>Levels Configuration</h3>
+  <label>Above Ground Levels:</label>
+  <input type="number" id="aboveLevels" value="5" min="0">
 
-                <!-- Tower Configuration -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Tower Configuration</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label for="towerType">Tower Type</label>
-                            <select id="towerType">
-                                <option value="0+1">0+1</option>
-                                <option value="0+2">0+2</option>
-                                <option value="0+3">0+3</option>
-                                <option value="1+1" selected>1+1</option>
-                                <option value="1+2">1+2</option>
-                                <option value="1+3">1+3</option>
-                                <option value="2+2">2+2</option>
-                                <option value="2+3">2+3</option>
-                                <option value="3+3">3+3</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="numberOfCars">Number of Cars</label>
-                            <input type="number" id="numberOfCars" value="70" step="1" min="1">
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <label>First Level Height Above Ground (mm):</label>
+  <input type="number" id="firstAboveHeight" value="2550">
 
-            <!-- Results Section -->
-            <div class="results-section">
-                <div class="section-header">
-                    <h2>Calculation Results</h2>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" id="toggleBreakdown">Show Details</button>
-                        <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
-                    </div>
-                </div>
+  <label>Below Ground Levels:</label>
+  <input type="number" id="belowLevels" value="2" min="0">
 
-                <!-- Main Results -->
-                <div class="card results-card">
-                    <div class="card-header">
-                        <h3>Retrieval Time Analysis</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="results-grid">
-                            <div class="result-item">
-                                <label>Minimum Retrieval Time</label>
-                                <div class="result-value">
-                                    <span id="minTimeSeconds">--</span> seconds
-                                    <span class="result-secondary">(<span id="minTimeMinutes">--</span> minutes)</span>
-                                </div>
-                            </div>
-                            <div class="result-item">
-                                <label>Maximum Retrieval Time</label>
-                                <div class="result-value">
-                                    <span id="maxTimeSeconds">--</span> seconds
-                                    <span class="result-secondary">(<span id="maxTimeMinutes">--</span> minutes)</span>
-                                </div>
-                            </div>
-                            <div class="result-item">
-                                <label>Average Retrieval Time</label>
-                                <div class="result-value">
-                                    <span id="avgTimeSeconds">--</span> seconds
-                                    <span class="result-secondary">(<span id="avgTimeMinutes">--</span> minutes)</span>
-                                </div>
-                            </div>
-                            <div class="result-item">
-                                <label>Total Time for All Cars</label>
-                                <div class="result-value">
-                                    <span id="totalTimeHours">--</span> hours
-                                    <span class="result-secondary">(<span id="totalTimeMinutes">--</span> minutes)</span>
-                                </div>
-                            </div>
-                            <div class="result-item">
-                                <label>System Throughput</label>
-                                <div class="result-value">
-                                    <span id="throughputPerHour">--</span> cars/hour
-                                    <span class="result-secondary">(<span id="throughputPercent">--</span>%)</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <label>Slot Height B1 (mm):</label>
+  <input type="number" id="b1Height" value="2100">
 
-                <!-- Level Summary -->
-                <div class="card level-summary-card">
-                    <div class="card-header">
-                        <h3>Level Configuration Summary</h3>
-                    </div>
-                    <div class="card-body">
-                        <div id="levelSummary">
-                            <!-- Dynamic content populated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
+  <label>Entry Type for B1:</label>
+  <select id="entryType">
+    <option value="straight">Straight</option>
+    <option value="90">90°</option>
+  </select>
 
-                <!-- Performance Indicators -->
-                <div class="card performance-card">
-                    <div class="card-header">
-                        <h3>Performance Indicators</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="performance-indicators">
-                            <div class="indicator" id="efficiencyIndicator">
-                                <div class="indicator-label">System Efficiency</div>
-                                <div class="indicator-bar">
-                                    <div class="indicator-fill" id="efficiencyFill"></div>
-                                </div>
-                                <div class="indicator-value" id="efficiencyValue">--</div>
-                            </div>
-                            <div class="indicator" id="speedIndicator">
-                                <div class="indicator-label">Retrieval Speed</div>
-                                <div class="indicator-bar">
-                                    <div class="indicator-fill" id="speedFill"></div>
-                                </div>
-                                <div class="indicator-value" id="speedValue">--</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <label>Other Below Ground Slot Height (B2, B3...) (mm):</label>
+  <input type="number" id="otherBHeight" value="1800">
+</div>
 
-                <!-- Detailed Breakdown (Hidden by default) -->
-                <div class="card breakdown-card" id="breakdownCard" style="display: none;">
-                    <div class="card-header">
-                        <h3>Detailed Calculation Breakdown</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="breakdown-content">
-                            <div class="breakdown-section">
-                                <h4>Base Time Components</h4>
-                                <div class="breakdown-item">
-                                    <span>Door Opening/Closing:</span>
-                                    <span id="breakdownDoorTime">--</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Processing Time:</span>
-                                    <span id="breakdownProcessingTime">--</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Additional Time:</span>
-                                    <span id="breakdownAdditionalTime">--</span>
-                                </div>
-                            </div>
-                            <div class="breakdown-section">
-                                <h4>Movement Times</h4>
-                                <div class="breakdown-item">
-                                    <span>Total Lifting Height:</span>
-                                    <span id="breakdownTotalHeight">--</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Lifting Time:</span>
-                                    <span id="breakdownLiftingTime">--</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Traversing Time:</span>
-                                    <span id="breakdownTraversingTime">--</span>
-                                </div>
-                                <div class="breakdown-item">
-                                    <span>Rotation Time (180°):</span>
-                                    <span id="breakdownRotationTime">--</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="card">
+  <label>Turn Table Required?</label>
+  <select id="turnTable">
+    <option value="no">No</option>
+    <option value="yes">Yes</option>
+  </select>
+</div>
 
-    <script src="js/calculator.js"></script>
+<button onclick="calculateTime()">Calculate Retrieval Time</button>
+
+<div class="result" id="result"></div>
+
+<script>
+function calculateTime() {
+  // Inputs
+  let liftSpeedMMin = parseFloat(document.getElementById('liftingSpeed').value);
+  let traverseSpeedMMin = parseFloat(document.getElementById('traverseSpeed').value);
+  let rotationRPM = parseFloat(document.getElementById('rotationSpeed').value);
+  let palletInner = parseFloat(document.getElementById('palletInner').value);
+  let towerCombo = document.getElementById('towerCombo').value.split('+').map(Number);
+  let aboveLevels = parseInt(document.getElementById('aboveLevels').value);
+  let firstAboveHeight = parseFloat(document.getElementById('firstAboveHeight').value);
+  let belowLevels = parseInt(document.getElementById('belowLevels').value);
+  let b1Height = parseFloat(document.getElementById('b1Height').value);
+  let entryType = document.getElementById('entryType').value;
+  let otherBHeight = parseFloat(document.getElementById('otherBHeight').value);
+  let turnTable = document.getElementById('turnTable').value;
+
+  // Speeds in m/s
+  let liftSpeed = liftSpeedMMin / 60;
+  let traverseSpeed = traverseSpeedMMin / 60;
+
+  // Traverse distance
+  let traverseDist = (palletInner + 270)/1000; // meters
+  let traverseExtra = 5;
+  let liftExtra = 15;
+  let doorTime = 20;
+  let controlTime = 20;
+  let additionalTime = 20;
+
+  let maxSlotHeight = Math.max(firstAboveHeight, b1Height, otherBHeight);
+  let allTimes = [];
+
+  for(let sideIndex=0; sideIndex<2; sideIndex++){
+    let palletsOnSide = towerCombo[sideIndex];
+    for(let pos=1; pos<=palletsOnSide; pos++){
+      // Shuffle
+      let shuffles = pos>1 ? pos-1 : 0;
+      let shuffleLiftTime = maxSlotHeight/1000 / liftSpeed + liftExtra;
+      let shuffleTraverseTime = traverseDist/traverseSpeed + traverseExtra;
+      let shuffleTimePer = shuffleLiftTime + shuffleTraverseTime;
+      let totalShuffleTime = shuffles * shuffleTimePer;
+
+      // Lift distance for target pallet (simplified above ground)
+      let liftDist = firstAboveHeight /1000;
+      let liftTime = liftDist / liftSpeed + liftExtra;
+      let traverseTime = traverseDist / traverseSpeed + traverseExtra;
+
+      // Rotation
+      let rotationTime = 0;
+      if(turnTable==='yes'){
+        let degrees = 180; // straight entry assumed for simplicity
+        let degPerSec = rotationRPM*360/60;
+        rotationTime = degrees/degPerSec;
+      }
+
+      // Total
+      let targetTime = liftTime + traverseTime + rotationTime + doorTime + controlTime + additionalTime;
+      let totalTime = totalShuffleTime + targetTime;
+      allTimes.push(totalTime);
+    }
+  }
+
+  let totalTimeAll = allTimes.reduce((a,b)=>a+b,0);
+  let minTime = Math.min(...allTimes);
+  let maxTime = Math.max(...allTimes);
+  let avgTime = totalTimeAll / allTimes.length;
+
+  document.getElementById('result').innerHTML = `
+    <p>Total Time (All Pallets): ${totalTimeAll.toFixed(2)} s</p>
+    <p>Minimum Time (Single Pallet): ${minTime.toFixed(2)} s</p>
+    <p>Maximum Time (Single Pallet): ${maxTime.toFixed(2)} s</p>
+    <p>Average Time (Single Pallet): ${avgTime.toFixed(2)} s</p>
+    <p><em>Note: Max slot height used for shuffle estimation; actual times may vary.</em></p>
+  `;
+}
+</script>
+
 </body>
 </html>
